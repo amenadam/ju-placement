@@ -1,4 +1,8 @@
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+if (typeof File === "undefined") {
+  global.File = class File {}; // temporary polyfill for Node 18
+}
+
 require("dotenv").config();
 
 const { Telegraf } = require("telegraf");

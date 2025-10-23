@@ -46,7 +46,7 @@ bot.catch((err, ctx) => {
 // Start command
 bot.start((ctx) => {
   return ctx.reply(
-    "👋 Welcome to JU Placement Checker!\n\nPlease send your *Admission Number* to check your placement.",
+    "👋 Welcome to JU Placement Checker!\n\nPlease send your *Admission Number* or *ID* to check your placement.",
     { parse_mode: "Markdown" }
   );
 });
@@ -56,11 +56,11 @@ bot.on("text", async (ctx) => {
   const admissionNumber = ctx.message.text.trim();
 
   // Validate admission number format
-  if (!/^\d+$/.test(admissionNumber)) {
-    return ctx.reply(
-      "⚠️ Please send only your numeric admission number (digits only)."
-    );
-  }
+ // if (!/^\d+$/.test(admissionNumber)) {
+   // return ctx.reply(
+     // "⚠️ Please send only your numeric admission number (digits only)."
+    //);
+  //}
 
   // Validate admission number length
   if (admissionNumber.length < 3 || admissionNumber.length > 20) {

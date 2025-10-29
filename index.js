@@ -51,15 +51,33 @@ bot.start((ctx) => {
   );
 });
 
+bot.command("about", (ctx) => {
+  ctx.reply(`About
+This bot is developed by JU Students Network 🚀
+
+Features:
+• Fast & simple access to placement results
+• Official data directly fetched from JU portal
+• Privacy-first: We do not store your personal info
+• 24/7 bot availability
+
+Our mission:
+Help JU students receive important updates faster, easier, and stress-free.
+
+For announcements and support, join our community:
+📢 JU Students Network Channel
+@JUStudentsNetwork
+`);
+});
 // Handle text messages
 bot.on("text", async (ctx) => {
   const admissionNumber = ctx.message.text.trim();
 
   // Validate admission number format
- // if (!/^\d+$/.test(admissionNumber)) {
-   // return ctx.reply(
-     // "⚠️ Please send only your numeric admission number (digits only)."
-    //);
+  // if (!/^\d+$/.test(admissionNumber)) {
+  // return ctx.reply(
+  // "⚠️ Please send only your numeric admission number (digits only)."
+  //);
   //}
 
   // Validate admission number length

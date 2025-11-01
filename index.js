@@ -8,6 +8,7 @@ require("dotenv").config();
 const { Telegraf } = require("telegraf");
 const https = require("https");
 const cheerio = require("cheerio");
+const cors = require("cors");
 const express = require("express");
 
 // Initialize bot
@@ -215,7 +216,7 @@ bot.on("text", async (ctx) => {
 // Health check endpoint for Railway
 const app = express();
 const PORT = process.env.PORT || 3000;
-
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {

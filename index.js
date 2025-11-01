@@ -234,6 +234,75 @@ app.get("/health", (req, res) => {
   });
 });
 
+app.get("/api/placement", async (req, res) => {
+  const admissionNumber = req.query.admission;
+  if (!admissionNumber) {
+    return res.status(400).json({ error: "Admission number is required" });
+  }
+
+  const url = `https://portal.ju.edu.et/freshmanR?AdmissionNumber=${admissionNumber}`;
+
+  try {
+    const data = await new Promise((resolve, reject) => {
+      const reqHttps = https.get(url, (response) => {
+        if (response.statusCode !== 200) {
+          reject(new Error(`HTTP Error: ${response.statusCode}`));
+          return;
+        }
+
+        let html = "";
+        response.on("data", (chunk) => (html += chunk));
+        response.on("end", () => resolve(html));
+      });
+
+      reqHttps.on("error", reject);
+      reqHttps.setTimeout(30000, () => {
+        reqHttps.destroy();
+        reject(new Error("Timeout"));
+      });
+    });
+
+    const $ = cheerio.load(data);
+    const rows = $("table tbody tr");
+
+    let info = {
+      admission: "",
+      id: "",
+      name: "",
+      program: "",
+      section: "",
+      campus: "",
+      dorm: "",
+      cafe: "",
+    };
+
+    rows.each((i, el) => {
+      const key = $(el).find("td").eq(0).text().trim();
+      const value = $(el).find("td").eq(1).text().trim();
+
+      if (key.includes("Admission Number")) info.admission = value;
+      if (key.includes("ID No.")) info.id = value;
+      if (key.includes("Full Name")) info.name = value;
+      if (key.includes("Program")) info.program = value;
+      if (key.includes("Section")) info.section = value;
+      if (key.includes("Campus Assigned")) info.campus = value;
+      if (key.includes("Dormitory")) info.dorm = value.replace(/\s+/g, " ");
+      if (key.includes("Cafeteria")) info.cafe = value;
+    });
+
+    if (!info.name || !info.admission) {
+      return res
+        .status(404)
+        .json({ error: "Admission number not found or invalid" });
+    }
+
+    res.json({ success: true, data: info });
+  } catch (error) {
+    console.error("API Error:", error.message);
+    res.status(500).json({ error: "Failed to fetch placement data" });
+  }
+});
+
 // Start server and bot
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
